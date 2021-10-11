@@ -16,7 +16,7 @@ wss.on('connection', () => {
   try {
     const user = new ChatUser(
       ws.send.bind(wss), // fn to call to message this user
-      10 // name of room for user
+      11 // name of room for user
     );
 
     // register handlers for message-received, connection-closed
