@@ -1,14 +1,15 @@
-
-// const WebSocketServer = require('ws').Server;
 const express = require('express')
+const app = express();
 const { PORT } = require("./config");
 const { Server } = require('ws');
-// const wss = new WebSocketServer({ port: PORT });
 const ChatUser = require('./ChatUser');
-
-const server = express().listen(PORT, () => console.log(`Listening on ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 const wss = new Server({ server });
-//initialize a simple http server
+
+app.get('/', function (req, res, next) {
+  res.send('Hello');
+})
+
 
 wss.on('connection', function connection(ws, req) {
   console.log("url: ", req.url.charAt(req.url.length - 1));
@@ -41,7 +42,6 @@ wss.on('connection', function connection(ws, req) {
   ws.on('message', function incoming(message) {
     console.log('received: %s', message);
   });
-
-
 });
 
+// module.exports = app;
