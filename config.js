@@ -15,6 +15,4 @@ console.log("---------------------------------".brightCyan, "\n");
 
 module.exports = {
   PORT,
-  SECRET_KEY,
-  BCRYPT_WF,
 };
