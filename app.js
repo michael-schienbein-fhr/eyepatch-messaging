@@ -1,9 +1,15 @@
 
-const WebSocketServer = require('ws').Server;
+// const WebSocketServer = require('ws').Server;
+const express = require('express')
 const { PORT } = require("./config");
-const wss = new WebSocketServer({ port: PORT });
+const { Server } = require('ws');
+// const wss = new WebSocketServer({ port: PORT });
 const ChatUser = require('./ChatUser');
+
+const server = express().listen(PORT, () => console.log(`Listening on ${PORT}`));
+const wss = new Server({ server });
 //initialize a simple http server
+
 wss.on('connection', function connection(ws, req) {
   console.log("url: ", req.url.charAt(req.url.length - 1));
   try {
