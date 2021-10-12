@@ -39,9 +39,6 @@ wss.on('connection', function connection(ws, req) {
   } catch (err) {
     console.error(err);
   }
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-  });
 });
 
 // module.exports = app;

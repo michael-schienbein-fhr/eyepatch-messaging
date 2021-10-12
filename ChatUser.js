@@ -33,12 +33,19 @@ class ChatUser {
 
   handleJoin(username) {
     this.username = username;
-
+    console.log(this.currentVideoTime);
     this.room.join(this);
     this.room.broadcast({
       type: 'note',
       text: `${this.username} joined "${this.room.id}".`,
 
+    });
+    this.room.broadcastSelf({
+      username: this.username,
+      type: 'playerState',
+      action: 'sync',
+      time: this.currentVideoTime,
+      text: `"Synced video time" in room: "${this.room.id}".`,
     });
     for (let video of this.queue) {
       this.room.broadcastSelf({
@@ -52,7 +59,6 @@ class ChatUser {
         thumbnail: video.thumbnail
       });
     };
-
     this.room.broadcastSelf({
       username: this.username,
       type: 'video',
@@ -60,13 +66,6 @@ class ChatUser {
       text: `"Changed to ${this.currentVideoId}" in room: "${this.room.id}".`,
       videoId: this.currentVideoId,
     })
-    this.room.broadcastSelf({
-      username: this.username,
-      type: 'playerState',
-      action: 'sync',
-      time: this.currentVideoTime,
-      text: `"Synced video time" in room: "${this.room.id}".`,
-    });
 
   };
 
