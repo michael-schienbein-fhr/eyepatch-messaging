@@ -13,7 +13,6 @@ class ChatUser {
     this.username = null; // becomes the username of the visitor
     this.room = Room.get(roomId); // room user will be in
     this.queue = Array.from(this.room.getVideos());
-    this.members = Array.from(this.room.getMembers())
     this.currentVideoId = this.room.getCurrentVideoId();
     this.currentVideoTime = this.room.getCurrentVideoTime();
     console.log(`created chat in room: ${this.room.id}`);
@@ -158,9 +157,7 @@ class ChatUser {
     let msg = JSON.parse(jsonData);
     if (msg.type === 'join') this.handleJoin(msg.username);
     else if (msg.type === 'chat') this.handleChat(msg.text);
-    else if (msg.type === 'playerState') {
-      this.handlePlayerState(msg);
-    }
+    else if (msg.type === 'playerState') this.handlePlayerState(msg);
     else if (msg.type === 'video') this.handleVideo(msg);
     else throw new Error(`bad message: ${msg.type}`);
   }
@@ -168,6 +165,9 @@ class ChatUser {
   /** Connection was closed: leave room, announce exit to others */
 
   handleClose() {
+    this.queue = null;
+    this.currentVideoId = null;
+    this.currentVideoTime = null;
     this.room.leave(this);
     this.room.broadcast({
       type: 'note',

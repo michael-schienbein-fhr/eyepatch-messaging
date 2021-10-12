@@ -115,11 +115,11 @@ class Room {
       return null;
     }
   };
-  
+
   // /** send message to all members in a room. */
 
   broadcast(data) {
-    console.debug(data);
+    // console.debug(data);
     for (let member of this.members) {
       member.send(JSON.stringify(data));
     }
@@ -130,7 +130,7 @@ class Room {
   broadcastExclusive(data) {
     for (let member of this.members) {
       if (member.username !== data.username) {
-        console.debug('sent to: ', member.username, data);
+        // console.debug('sent to: ', member.username, data);
         member.send(JSON.stringify(data));
       }
     }
