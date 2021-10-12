@@ -115,6 +115,15 @@ class Room {
       return null;
     }
   };
+  
+  // /** send message to all members in a room. */
+
+  broadcast(data) {
+    console.debug(data);
+    for (let member of this.members) {
+      member.send(JSON.stringify(data));
+    }
+  }
 
   /** send message to all members in a room. */
   // exclude self
@@ -127,15 +136,6 @@ class Room {
     }
   }
 
-  // /** send message to all members in a room. */
-
-  broadcast(data) {
-    console.debug(data);
-    for (let member of this.members) {
-      member.send(JSON.stringify(data));
-    }
-  }
-
   broadcastSelf(data) {
     for (let member of this.members) {
       if (member.username === data.username) {
@@ -144,15 +144,6 @@ class Room {
       }
     }
   }
-  
-  // broadcastOthers(data) {
-  //   for (let member of this.members) {
-  //     if (member.username === data.username) {
-  //       // console.debug(data);
-  //       member.send(JSON.stringify(data));
-  //     }
-  //   }
-  // }
 }
 
 module.exports = Room;
