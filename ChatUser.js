@@ -33,7 +33,6 @@ class ChatUser {
 
   handleJoin(username) {
     this.username = username;
-    console.log(this.currentVideoTime);
     this.room.join(this);
     this.room.broadcast({
       type: 'note',
@@ -43,7 +42,7 @@ class ChatUser {
     this.room.broadcastSelf({
       username: this.username,
       type: 'playerState',
-      action: 'sync',
+      state: 'sync',
       time: this.currentVideoTime,
       text: `"Synced video time" in room: "${this.room.id}".`,
     });
