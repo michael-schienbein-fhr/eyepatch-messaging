@@ -31,11 +31,16 @@ class Room {
     this.id = roomId;
     this.members = new Set();
     this.videos = new Set();
-    this.playerIds = new Set();
     this.currentVideoId = null;
     this.currentVideoTime = null;
   }
 
+  close(id) {
+    if (this.members.size === 0) {
+      console.log(`Closed room: ${id}`);
+      ROOMS.delete(id);
+    }
+  }
   /** member joining a room. */
 
   join(member) {
@@ -79,19 +84,6 @@ class Room {
     }
   };
 
-  addPlayerId(id) {
-    this.playerIds.add(id);
-  }
-  /** add video to queue. */
-
-  getPlayerIds() {
-    if (this.playerIds && this.playerIds !== undefined) {
-      return this.playerIds;
-    } else {
-      return null;
-    }
-  };
-
   setCurrentVideoId(videoId) {
     this.currentVideoId = videoId;
   };
@@ -119,7 +111,7 @@ class Room {
   // /** send message to all members in a room. */
 
   broadcast(data) {
-    // console.debug(data);
+    console.debug(data);
     for (let member of this.members) {
       member.send(JSON.stringify(data));
     }

@@ -157,7 +157,9 @@ class ChatUser {
     let msg = JSON.parse(jsonData);
     if (msg.type === 'join') this.handleJoin(msg.username);
     else if (msg.type === 'chat') this.handleChat(msg.text);
-    else if (msg.type === 'playerState') this.handlePlayerState(msg);
+    else if (msg.type === 'playerState') {
+      this.handlePlayerState(msg);
+    }
     else if (msg.type === 'video') this.handleVideo(msg);
     else throw new Error(`bad message: ${msg.type}`);
   }
@@ -169,6 +171,7 @@ class ChatUser {
     this.currentVideoId = null;
     this.currentVideoTime = null;
     this.room.leave(this);
+    this.room.close(this.room.id)
     this.room.broadcast({
       type: 'note',
       text: `${this.username} left ${this.room.id}.`

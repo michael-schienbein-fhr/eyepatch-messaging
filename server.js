@@ -12,7 +12,6 @@ app.get('/', function (req, res, next) {
 
 
 wss.on('connection', function connection(ws, req) {
-  console.log("url: ", req.url.charAt(req.url.length - 1));
   try {
     const user = new ChatUser(
       ws.send.bind(ws), // fn to call to message this user
