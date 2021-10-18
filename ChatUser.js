@@ -122,7 +122,9 @@ class ChatUser {
     } else if (this.currentVideoTime < msg.time) {
       this.room.setCurrentVideoTime(msg.time);
     }
-    if (!this.currentVideoState && msg.state === 'play' || 'pause'){
+    if (!this.currentVideoState && msg.state === 'play' || 'pause') {
+      this.room.setCurrentVideoState(msg.state);
+    } else if (msg.state === 'play' || 'pause') {
       this.room.setCurrentVideoState(msg.state);
     }
     if (msg.who === 'exclusive') {
