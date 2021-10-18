@@ -15,6 +15,7 @@ class ChatUser {
     this.queue = Array.from(this.room.getVideos());
     this.currentVideoId = this.room.getCurrentVideoId();
     this.currentVideoTime = this.room.getCurrentVideoTime();
+    this.currentVideoState = this.room.getCurrentVideoState();
     console.log(`created chat in room: ${this.room.id}`);
   };
 
@@ -43,6 +44,7 @@ class ChatUser {
       type: 'playerState',
       state: 'sync',
       time: this.currentVideoTime,
+      playerState: this.currentVideoState,
       text: `"Synced video time" in room: "${this.room.id}".`,
     });
     for (let video of this.queue) {
@@ -116,8 +118,10 @@ class ChatUser {
   handlePlayerState(msg) {
     if (!this.currentVideoTime) {
       this.room.setCurrentVideoTime(msg.time);
+      this.room.setCurrentVideoState(msg.state);
     } else if (this.currentVideoTime < msg.time) {
       this.room.setCurrentVideoTime(msg.time);
+      this.room.setCurrentVideoState(msg.state);
     }
     if (msg.who === 'exclusive') {
       this.room.broadcastExclusive({
@@ -157,10 +161,9 @@ class ChatUser {
     let msg = JSON.parse(jsonData);
     if (msg.type === 'join') this.handleJoin(msg.username);
     else if (msg.type === 'chat') this.handleChat(msg.text);
-    else if (msg.type === 'playerState') {
-      this.handlePlayerState(msg);
-    }
+    else if (msg.type === 'playerState') this.handlePlayerState(msg);
     else if (msg.type === 'video') this.handleVideo(msg);
+    else if (msg.type === 'close') this.handleClose();
     else throw new Error(`bad message: ${msg.type}`);
   }
 
@@ -170,6 +173,7 @@ class ChatUser {
     this.queue = null;
     this.currentVideoId = null;
     this.currentVideoTime = null;
+    this.currentVideoState = null;
     this.room.leave(this);
     this.room.close(this.room.id)
     this.room.broadcast({

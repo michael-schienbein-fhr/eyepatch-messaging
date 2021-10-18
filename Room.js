@@ -33,6 +33,7 @@ class Room {
     this.videos = new Set();
     this.currentVideoId = null;
     this.currentVideoTime = null;
+    this.currentVideoState = null;
   }
 
   close(id) {
@@ -103,6 +104,18 @@ class Room {
   getCurrentVideoTime() {
     if (this.currentVideoTime && this.currentVideoTime !== null) {
       return this.currentVideoTime;
+    } else {
+      return null;
+    }
+  };
+
+  setCurrentVideoState(videoState) {
+    this.currentVideoState = videoState;
+  };
+
+  getCurrentVideoState() {
+    if (this.currentVideoState && this.currentVideoState !== null) {
+      return this.currentVideoState;
     } else {
       return null;
     }
