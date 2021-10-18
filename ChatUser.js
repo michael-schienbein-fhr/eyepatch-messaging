@@ -32,6 +32,7 @@ class ChatUser {
   /** handle joining: add to room members, announce join */
 
   handleJoin(username) {
+    console.log(this.currentVideoState)
     this.username = username;
     this.room.join(this);
     this.room.broadcast({
