@@ -53,14 +53,6 @@ class Room {
     this.members.delete(member);
   }
 
-  getMembers() {
-    if (this.members && this.members !== undefined) {
-      return this.members
-    } else {
-      return null;
-    }
-  };
-
   /** add video to queue. */
 
   add(video) {

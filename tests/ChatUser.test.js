@@ -6,7 +6,7 @@ const request = require('superwstest');
 const port = 3000 + Number(process.env.JEST_WORKER_ID);
 
 
-describe('Joining room', () => {
+describe('Messaging functionality', () => {
   let server;
 
   beforeEach(async () => {
@@ -232,6 +232,13 @@ describe('Joining room', () => {
         time: 999,
         videoId: "testVideoId"
       })
+      .sendJson({
+        type: "playerState",
+        who: 'exclusive',
+        state: "play",
+        time: 9999,
+        videoId: "testVideoId"
+      })
 
     await request(server)
       .ws('/path/ws/9')
@@ -242,7 +249,7 @@ describe('Joining room', () => {
         username: 'testuser2',
         type: 'playerState',
         state: 'sync',
-        time: 999,
+        time: 9999,
         playerState: "play",
         text: '"Synced video time" in room: "9".'
       })
@@ -250,46 +257,65 @@ describe('Joining room', () => {
       .expectClosed()
   })
 
-  // test('Broadcast playerState exclusive', async () => {
-  // const [client1, messages1] = await createSocketClient(port, 10, 9);
-  // const [client2, messages2] = await createSocketClient(port, 10, 9);
+  test('Broadcast playerState everyone', async () => {
+    const [client1, messages1] = await createSocketClient(port, 5, 9);
+    const [client2, messages2] = await createSocketClient(port, 5, 9);
 
-  // const client1Message = { type: "join", username: "testuser1" };
-  // const client1Message2 = {
-  //   type: "playerState",
-  //   who: "exclusive",
-  //   state: "play",
-  //   time: 999,
-  //   videoId: "testVideoId"
-  // };
-  // const client2Message = { type: "join", username: "testuser2" };
+    const client1Message = { type: "join", username: "testuser1" };
+    const client1Message2 = {
+      type: "playerState",
+      who: 'everyone',
+      state: "play",
+      time: 999,
+      videoId: "testVideoIdSentToEveryone"
+    };
+    const client2Message = { type: "join", username: "testuser2" };
 
-  // client1.send(JSON.stringify(client1Message));
-  // client2.send(JSON.stringify(client2Message));
-  // setTimeout(() => client1.send(JSON.stringify(client1Message2)), 500)
-  // await waitForSocketState(client1, client1.CLOSED);
-  // await waitForSocketState(client2, client2.CLOSED);
-  // console.log(messages2)
-  // expect(messages1[0]).toEqual({ type: "note", text: 'testuser1 joined "9".' });
-  // // expect(messages2[3]).toEqual({
-  // //   type: 'video',
-  // //   action: 'add',
-  // //   text: '"testVideoTitle" added to queue in room: "9".',
-  // //   videoId: 'testVideoId',
-  // //   title: 'testVideoTitle',
-  // //   description: 'testDescription',
-  // //   thumbnail: 'testThumbnail'
-  // // });
-  // client1.close()
-  // client2.close()
-  // })
+    client1.send(JSON.stringify(client1Message));
+    client2.send(JSON.stringify(client2Message));
+    setTimeout(() => client1.send(JSON.stringify(client1Message2)), 500)
+    await waitForSocketState(client1, client1.CLOSED);
+    await waitForSocketState(client2, client2.CLOSED);
 
-  // test('Broadcast playerState everyone', async () => {
+    console.log(messages2)
+    expect(messages1[0]).toEqual({ type: "note", text: 'testuser1 joined "9".' });
+    expect(messages2[3]).toEqual({
+      username: "testuser1",
+      type: "playerState",
+      who: 'everyone',
+      state: "play",
+      time: 999,
+      videoId: "testVideoIdSentToEveryone"
+    });
 
-  // })
-  // test('Broadcast playerState self', async () => {
+    client1.close()
+    client2.close()
+  })
 
-  // })
+  test('Broadcast playerState self', async () => {
+    await request(server)
+      .ws('/path/ws/9')
+      .sendJson({ type: "join", username: "testuser" })
+      .expectJson({ type: 'note', text: 'testuser joined "9".' })
+      .sendJson({
+        type: "playerState",
+        who: 'self',
+        state: "play",
+        time: 999,
+        videoId: "testVideoIdSentToSelf"
+      })
+      .expectJson()
+      .expectJson()
+      .expectJson({
+        username: 'testuser',
+        type: 'playerState',
+        who: 'self',
+        state: 'play',
+        time: 999,
+        videoId: 'testVideoIdSentToSelf'
+      });
+
+  })
 
   test('Handle close', async () => {
     const [client1, messages1] = await createSocketClient(port, 5, 9);
@@ -314,7 +340,4 @@ describe('Joining room', () => {
 
   });
 
-  // test('Bad message type', async () => {
-
-  // })
 });
