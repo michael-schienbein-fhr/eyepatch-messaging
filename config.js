@@ -3,7 +3,7 @@
 require("dotenv").config();
 require("colors");
 
-const PORT = +process.env.PORT || 8001;
+const PORT = +process.env.PORT || 8002;
 
 console.log("");
 console.log("Eyepatch Messaging Server Config:".brightCyan);

@@ -38,7 +38,6 @@ class Room {
 
   close(id) {
     if (this.members.size === 0) {
-      console.log(`Closed room: ${id}`);
       ROOMS.delete(id);
     }
   }
@@ -124,7 +123,7 @@ class Room {
   // /** send message to all members in a room. */
 
   broadcast(data) {
-    console.debug(data);
+    // console.debug(data);
     for (let member of this.members) {
       member.send(JSON.stringify(data));
     }

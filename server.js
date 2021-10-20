@@ -3,13 +3,17 @@ const app = express();
 const { PORT } = require("./config");
 const { Server } = require('ws');
 const ChatUser = require('./ChatUser');
+const { NotFoundError } = require("./expressError");
 const server = app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+
 const wss = new Server({ server });
+
+
 
 app.get('/', function (req, res, next) {
   res.send('Hello');
 })
-
 
 wss.on('connection', function connection(ws, req) {
   try {
@@ -40,4 +44,20 @@ wss.on('connection', function connection(ws, req) {
   }
 });
 
-// module.exports = app;
+/** Handle 404 errors -- this matches everything */
+app.use(function (req, res, next) {
+  return next(new NotFoundError());
+});
+
+/** Generic error handler; anything unhandled goes here. */
+app.use(function (err, req, res, next) {
+  if (process.env.NODE_ENV !== "test") console.error(err.stack);
+  const status = err.status || 500;
+  const message = err.message;
+
+  return res.status(status).json({
+    error: { message, status },
+  });
+});
+
+module.exports = app;

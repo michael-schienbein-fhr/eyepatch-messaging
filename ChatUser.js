@@ -16,7 +16,7 @@ class ChatUser {
     this.currentVideoId = this.room.getCurrentVideoId();
     this.currentVideoTime = this.room.getCurrentVideoTime();
     this.currentVideoState = this.room.getCurrentVideoState();
-    console.log(`created chat in room: ${this.room.id}`);
+    // console.log(`created chat in room: ${this.room.id}`);
   };
 
   /** send msgs to this client using underlying connection-send-function */
@@ -32,7 +32,7 @@ class ChatUser {
   /** handle joining: add to room members, announce join */
 
   handleJoin(username) {
-    console.log(this.currentVideoState)
+    // console.log(this.queue);
     this.username = username;
     this.room.join(this);
     this.room.broadcast({
@@ -98,7 +98,7 @@ class ChatUser {
       this.room.broadcast({
         type: 'video',
         action: 'remove',
-        text: `"${this.video.title}" removed from queue in room: "${this.room.id}".`,
+        text: `Video removed from queue in room: "${this.room.id}".`,
         videoId: this.video.videoId,
         title: this.video.title,
         description: this.video.description,
@@ -161,7 +161,6 @@ class ChatUser {
 
   handleMessage(jsonData) {
     let msg = JSON.parse(jsonData);
-    console.log(msg);
     if (msg.type === 'join') this.handleJoin(msg.username);
     else if (msg.type === 'chat') this.handleChat(msg.text);
     else if (msg.type === 'playerState') this.handlePlayerState(msg);
@@ -173,16 +172,16 @@ class ChatUser {
   /** Connection was closed: leave room, announce exit to others */
 
   handleClose() {
+    this.room.broadcast({
+      type: 'note',
+      text: `${this.username} left ${this.room.id}.`
+    });
     this.queue = null;
     this.currentVideoId = null;
     this.currentVideoTime = null;
     this.currentVideoState = null;
     this.room.leave(this);
     this.room.close(this.room.id)
-    this.room.broadcast({
-      type: 'note',
-      text: `${this.username} left ${this.room.id}.`
-    });
   }
 }
 
