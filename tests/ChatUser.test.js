@@ -277,7 +277,6 @@ describe('Messaging functionality', () => {
     await waitForSocketState(client1, client1.CLOSED);
     await waitForSocketState(client2, client2.CLOSED);
 
-    console.log(messages2)
     expect(messages1[0]).toEqual({ type: "note", text: 'testuser1 joined "9".' });
     expect(messages2[3]).toEqual({
       username: "testuser1",
